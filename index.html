@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>HTML5</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script>
+	$(document).ready(function(){
+		var $domain = 'localhost3.com';
+		var $protocol = 'http';
+		$('#get-profile').click(function(){
+			$('#get-profile').prop('disabled', true);
+			var login = $('#login').val();
+			var password = $('#password').val();
+
+			$.ajax({
+				url: $protocol + '://' +  $domain + '/api/users/profile',
+				dataType : "json", 
+				beforeSend: function (xhr){ 
+					xhr.setRequestHeader('Authorization', "Basic " + btoa(login + ':' + password)); 
+				},
+				success: function (response, textStatus) {
+					$('#get-profile').prop('disabled', false);
+					var $div = $('#profile').clone().appendTo('#container');
+					$div.show();
+					$div.find('.profile-email').val(response.data.email);
+					$div.find('.profile-name').val(response.data.name);
+					$div.find('.profile-id').val(response.data.id);
+					$div.find('.profile-image-upload').click(function(){
+						var $file = $div.find('.profile-image')[0].files[0];
+						if ($file == undefined) {
+							return;
+						}
+						var fd = new FormData();
+						fd.append('photo', $file);
+						$.ajax({
+							url: $protocol + '://' +  $domain + '/api/users/upload',
+					        data: fd,
+							contentType: false,
+							processData: false,
+							type:'POST',
+							beforeSend: function (xhr){ 
+								xhr.setRequestHeader('Authorization', "Basic " + btoa(login + ':' + password)); 
+							},
+							success: function (response, textStatus) {
+								console.log(response);
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+								console.log(errorThrown);
+							}
+						});
+					});
+					
+					console.log(response.data.email);
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					$('#get-profile').prop('disabled', false);
+					alert(errorThrown);
+				}
+			});
+			
+		});
+	});
+	</script>
+</head>
+<body>
+	<div>
+		<p><label for="login">Login</label><input type="text" name="login" id="login"></p>
+		<p><label for="password">Password</label><input type="text" name="password" id="password"></p>
+	</div>
+	<button id="get-profile">Get profile</button>
+	<div id="container" style="position:absolute;right:0">
+	</div>
+	<div id="profile" hidden="">
+		<input type="hidden" class="profile-id">
+		<p><label for="profile-email">Email:</label><input class="profile-email" type="text"></p>
+		<p><label for="profile-name">Name:</label><input class="profile-name" type="text"></p>
+		<p><button class="profile-image-upload">Upload image</button><input class="profile-image" type="file"></p>
+	</div>
+</body>
+</html>
