@@ -1,0 +1,5 @@
+﻿insert into `categories` (`name`) values ('Волосы');
+insert into `categories` (`name`) values ('Ресницы');
+insert into `categories` (`name`) values ('Маникюр');
+insert into `categories` (`name`) values ('Шугаринг');
+insert into `categories` (`name`) values ('Визаж');
