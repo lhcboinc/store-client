@@ -51,6 +51,29 @@
 						});
 					});
 					
+					$div.find('.profile-update').click(function() {
+						var $email = $div.find('.profile-email').val();
+						var $name = $div.find('.profile-name').val();
+						alert($name);
+						var $password = $div.find('.profile-password').val();
+						$.ajax({
+							url: $protocol + '://' +  $domain + '/api/users',
+							type:'PUT',
+							dataType : "json",
+							data: JSON.stringify({'email': $email, 'name':$name, 'password':$password}),
+							beforeSend: function (xhr){ 
+								xhr.setRequestHeader('Authorization', "Basic " + btoa(login + ':' + password)); 
+							},
+							success: function (response, textStatus) {
+								console.log(response);
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+								console.log(errorThrown);
+							}
+						});
+				
+					});
+					
 					console.log(response.data.email);
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
@@ -73,8 +96,11 @@
 	</div>
 	<div id="profile" hidden="">
 		<input type="hidden" class="profile-id">
-		<p><label for="profile-email">Email:</label><input class="profile-email" type="text"></p>
 		<p><label for="profile-name">Name:</label><input class="profile-name" type="text"></p>
+		<p><label for="profile-email">Email:</label><input class="profile-email" type="text"></p>
+		<p><label for="profile-password">Password:</label><input class="profile-password" type="password"></p>
+		<p><button class="profile-update">Save</button></p>
+		<br/>
 		<p><button class="profile-image-upload">Upload image</button><input class="profile-image" type="file"></p>
 	</div>
 </body>
